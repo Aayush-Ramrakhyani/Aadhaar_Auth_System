@@ -1,0 +1,109 @@
+.main-content {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 20px 60px;
+}
+
+.otp-card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-heavy);
+  padding: 36px 36px 28px;
+  width: 100%;
+  max-width: 460px;
+}
+
+.otp-card-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e8eaf6;
+}
+
+.otp-icon {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  background: linear-gradient(135deg, #1a237e, #3949ab);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(26,35,126,0.3);
+}
+
+.otp-icon svg { width: 26px; height: 26px; }
+
+.otp-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gov-blue);
+  margin-bottom: 4px;
+}
+
+.otp-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.otp-subtitle strong { color: var(--text-secondary); }
+
+.verify-btn {
+  margin-top: 8px;
+  padding: 14px;
+  font-size: 16px;
+}
+
+.otp-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.expiry-timer {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.expiry-timer strong { color: var(--gov-blue); }
+
+.timer-urgent strong { color: var(--error); }
+.timer-expired { color: var(--error); font-size: 13px; }
+.timer-expired a { color: var(--gov-blue); font-weight: 600; }
+
+.resend-btn {
+  padding: 8px 16px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.back-link {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 8px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  cursor: pointer;
+  text-align: center;
+  transition: color var(--transition);
+}
+
+.back-link:hover:not(:disabled) { color: var(--gov-blue); }
+.back-link:disabled { opacity: 0.5; cursor: not-allowed; }
+
+@media (max-width: 520px) {
+  .otp-card { padding: 24px 18px 20px; }
+  .otp-title { font-size: 17px; }
+  .otp-footer-row { flex-direction: column; align-items: flex-start; }
+}

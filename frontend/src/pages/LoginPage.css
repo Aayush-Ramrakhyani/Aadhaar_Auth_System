@@ -1,0 +1,101 @@
+.page-wrap {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(160deg, #e8eaf6 0%, #f0f2f5 60%);
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 20px 60px;
+}
+
+.login-card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-heavy);
+  padding: 36px 36px 28px;
+  width: 100%;
+  max-width: 480px;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 22px;
+  border-bottom: 2px solid #e8eaf6;
+}
+
+.card-icon {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(26,35,126,0.3);
+}
+
+.card-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.card-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gov-blue);
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+.card-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.aadhaar-input {
+  letter-spacing: 3px;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+}
+
+.field-hint {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+.field-hint strong {
+  color: var(--text-secondary);
+}
+
+.submit-btn {
+  margin-top: 8px;
+  padding: 14px;
+  font-size: 16px;
+  border-radius: var(--radius);
+}
+
+.btn-icon {
+  font-size: 18px;
+}
+
+@media (max-width: 520px) {
+  .login-card {
+    padding: 24px 18px 20px;
+    border-radius: var(--radius);
+  }
+  .card-title { font-size: 17px; }
+}

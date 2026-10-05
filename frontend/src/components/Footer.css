@@ -1,0 +1,28 @@
+.site-footer {
+  background: #1a237e;
+  color: rgba(255,255,255,0.7);
+  padding: 20px;
+  margin-top: auto;
+}
+
+.footer-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.footer-notice {
+  font-size: 12px;
+  line-height: 1.6;
+  margin-bottom: 8px;
+  color: rgba(255,255,255,0.65);
+}
+
+.footer-notice strong {
+  color: #ffa000;
+}
+
+.footer-copy {
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+}

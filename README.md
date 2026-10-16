@@ -279,3 +279,10 @@ without notice, and using them without authorization would violate UIDAI's terms
 - The mock provider is for **development and testing only**.
 - This application does not bypass any UIDAI security controls.
 - Verhoeff validation ≠ real Aadhaar existence check.
+
+
+
+## License
+
+This project was built under a freelance contract for **Technowire Data Science**.
+All rights reserved. Not open for redistribution.

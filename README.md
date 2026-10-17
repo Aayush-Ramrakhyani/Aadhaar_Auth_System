@@ -6,6 +6,9 @@ A complete Aadhaar OTP authentication web application — React + Node.js.
 > Authentication in this build uses a **mock provider** for development and testing.
 > Real Aadhaar authentication requires official UIDAI AUA/ASA authorization.
 
+Built for **Technowire Data Science** as part of a freelance contract (Sep 2026).
+
+
 ---
 
 ## Architecture

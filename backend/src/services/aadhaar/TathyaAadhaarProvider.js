@@ -1,3 +1,10 @@
+/*
+ * TathyaAadhaarProvider.js
+ * Aadhaar provider that integrates with the UIDAI Tathya (myAadhaar) gateway.
+ * Handles CAPTCHA fetching and OTP generation; full OTP verification requires
+ * an OAuth PKCE redirect flow that must be completed by the calling application.
+ */
+
   const AadhaarAuthProvider = require('./AadhaarAuthProvider');
   const axios = require('axios');
 const { logger, maskAadhaar } = require('../../utils/logger');
@@ -30,7 +37,7 @@ class TathyaAadhaarProvider extends AadhaarAuthProvider {
   }
 
   async generateCaptcha() {
-    const response = await axios.get(
+    const response = await axios.get( // external API call: GET tathya.uidai.gov.in/access/generateCaptcha
       `${this._baseUrl}/access/generateCaptcha`,
       {
         headers: {
@@ -72,7 +79,7 @@ class TathyaAadhaarProvider extends AadhaarAuthProvider {
       throw new Error('Tathya CAPTCHA transaction and value are required');
     }
 
-    const response = await axios.post(
+    const response = await axios.post( // external API call: POST tathya.uidai.gov.in/access/generateOTPForOAuth
       `${this._baseUrl}/access/generateOTPForOAuth`,
       { uid: aadhaar, captcha: captchaValue, captchaTxnId: captchaId },
       { validateStatus: () => true }
@@ -88,7 +95,7 @@ class TathyaAadhaarProvider extends AadhaarAuthProvider {
       return { success: false, error: body?.message || 'Tathya OTP request failed' };
     }
 
-    this._sessions.set(transactionId, {
+    this._sessions.set(transactionId, { // cache Aadhaar + provider txnId for the subsequent verifyOtp call
       aadhaar,
       providerTxnId: body.txnId,
     });
@@ -105,7 +112,7 @@ class TathyaAadhaarProvider extends AadhaarAuthProvider {
       return { success: false, authenticated: false, error: 'TATHYA_SESSION_NOT_FOUND' };
     }
 
-    const response = await axios.post(
+    const response = await axios.post( // external API call: POST tathya.uidai.gov.in/access/login
       `${this._baseUrl}/access/login`,
       { uid: session.aadhaar, otp: String(otp) },
       { validateStatus: () => true }

@@ -1,3 +1,10 @@
+/*
+ * pages/OtpPage.jsx
+ * Second step of the auth flow: accepts the 6-digit OTP, enforces a session
+ * countdown timer, handles resend with a cooldown, and navigates to
+ * SuccessPage or FailurePage based on the verify-otp API response.
+ */
+
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
@@ -13,7 +20,7 @@ export default function OtpPage() {
   const location = useLocation();
   const state = location.state;
 
-  // Redirect if reached without proper state
+  // Redirect if reached without proper state — prevents direct URL access to /otp without a valid transaction
   useEffect(() => {
     if (!state?.transactionId) navigate('/', { replace: true });
   }, [state, navigate]);
@@ -64,10 +71,10 @@ export default function OtpPage() {
     setLoading(true);
     setError(null);
     try {
-      const result = await aadhaarApi.verifyOtp(transactionId, otp);
+      const result = await aadhaarApi.verifyOtp(transactionId, otp); // API call: POST /api/aadhaar/verify-otp
       if (result.data?.authenticated) {
         setSuccess(true);
-        setTimeout(() => navigate('/success', { replace: true }), 800);
+        setTimeout(() => navigate('/success', { replace: true }), 800); // brief delay so the success alert is visible before navigation
       } else {
         navigate('/failure', { replace: true });
       }
@@ -92,8 +99,8 @@ export default function OtpPage() {
     setError(null);
     setOtp('');
     try {
-      await aadhaarApi.resendOtp(transactionId);
-      startResendCooldown();
+      await aadhaarApi.resendOtp(transactionId); // API call: POST /api/aadhaar/resend-otp
+      startResendCooldown(); // start the 60-second UI cooldown to mirror the server-side cooldown
     } catch (err) {
       setError(err.message || 'Failed to resend OTP.');
     } finally {

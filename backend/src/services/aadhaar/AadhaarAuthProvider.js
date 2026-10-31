@@ -1,3 +1,10 @@
+/*
+ * AadhaarAuthProvider.js
+ * Abstract base class that defines the interface all Aadhaar authentication
+ * providers must implement: validateAadhaar, requestOtp, verifyOtp, resendOtp.
+ * The active provider is selected at startup via the AADHAAR_PROVIDER env variable.
+ */
+
 /**
  * AadhaarAuthProvider — abstract base class.
  * All authentication providers must implement these methods.

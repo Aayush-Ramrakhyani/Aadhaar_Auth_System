@@ -1,3 +1,9 @@
+/*
+ * pages/FailurePage.jsx
+ * Terminal failure page shown when OTP verification is unsuccessful; prompts
+ * the user to retry by navigating back to the login page.
+ */
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';

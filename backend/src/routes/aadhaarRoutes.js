@@ -1,3 +1,10 @@
+/*
+ * routes/aadhaarRoutes.js
+ * Declares all Aadhaar authentication routes (/validate, /request-otp,
+ * /verify-otp, /resend-otp, /transaction/:id), wiring per-route rate limiters
+ * and input validators ahead of each controller handler.
+ */
+
 const express = require('express');
 const router = express.Router();
 const { otpRequestLimiter, otpVerifyLimiter } = require('../middleware/rateLimiter');
@@ -45,10 +52,10 @@ const {
 //    POST https://tathya.uidai.gov.in/telemetryservice/send-metrics
 // ─────────────────────────────────────────────────────────────────────────────
 
-router.post('/validate',     validateAadhaar);
-router.post('/request-otp',  otpRequestLimiter, validateOtpRequest, requestOtp);
-router.post('/verify-otp',   otpVerifyLimiter,  validateVerifyOtp,  verifyOtp);
-router.post('/resend-otp',   otpVerifyLimiter,  validateResendOtp,  resendOtp);
-router.get('/transaction/:transactionId', getTransaction);
+router.post('/validate',     validateAadhaar); // client-side Verhoeff pre-check; no external call
+router.post('/request-otp',  otpRequestLimiter, validateOtpRequest, requestOtp);   // triggers OTP SMS via provider
+router.post('/verify-otp',   otpVerifyLimiter,  validateVerifyOtp,  verifyOtp);    // submits OTP to provider for verification
+router.post('/resend-otp',   otpVerifyLimiter,  validateResendOtp,  resendOtp);    // re-triggers OTP SMS; cooldown enforced
+router.get('/transaction/:transactionId', getTransaction); // internal session status; safe fields only
 
 module.exports = router;

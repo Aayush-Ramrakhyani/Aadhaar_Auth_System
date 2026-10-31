@@ -1,9 +1,15 @@
+/*
+ * tests/verhoeff.test.js
+ * Unit tests for the Verhoeff checksum algorithm: validates round-trip
+ * generate+validate, rejects tampered digits, and rejects non-numeric input.
+ */
+
 const { verhoeffValidate, verhoeffGenerate } = require('../src/utils/verhoeff');
 
 // Generate valid 12-digit numbers dynamically so the test never depends on
 // hardcoded values that might be wrong.
 const bases = ['23412341234', '11111111111', '99999999999'];
-const validNumbers = bases.map((b) => b + verhoeffGenerate(b));
+const validNumbers = bases.map((b) => b + verhoeffGenerate(b)); // append computed check digit to form valid 12-digit numbers
 
 describe('Verhoeff Algorithm', () => {
   test('validates numbers produced by verhoeffGenerate', () => {

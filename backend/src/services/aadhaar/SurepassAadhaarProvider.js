@@ -1,3 +1,10 @@
+/*
+ * SurepassAadhaarProvider.js
+ * Aadhaar provider using the Surepass KYC API (a licensed third-party AUA).
+ * Requires SUREPASS_API_KEY and SUREPASS_BASE_URL in .env; handles OTP
+ * generation, verification, and resend via the Surepass aadhaar-v2 endpoints.
+ */
+
 const axios = require('axios');
 const AadhaarAuthProvider = require('./AadhaarAuthProvider');
 const { verhoeffValidate } = require('../../utils/verhoeff');
@@ -51,7 +58,7 @@ class SurepassAadhaarProvider extends AadhaarAuthProvider {
         transactionId,
       });
 
-      const res = await this._client.post('/aadhaar-v2/send-otp', {
+      const res = await this._client.post('/aadhaar-v2/send-otp', { // external API call: POST kyc-api.surepass.io/api/v1/aadhaar-v2/send-otp
         id_number: aadhaar,
       });
 
@@ -62,7 +69,7 @@ class SurepassAadhaarProvider extends AadhaarAuthProvider {
         return { success: false, error: body.message || 'OTP request failed' };
       }
 
-      const clientId = body.data?.client_id;
+      const clientId = body.data?.client_id; // Surepass client_id is required as a session token for the verify step
       if (!clientId) {
         return { success: false, error: 'Surepass did not return a client_id' };
       }
@@ -88,7 +95,7 @@ class SurepassAadhaarProvider extends AadhaarAuthProvider {
     try {
       logger.info('[SUREPASS] Verifying OTP', { transactionId });
 
-      const res = await this._client.post('/aadhaar-v2/submit-otp', {
+      const res = await this._client.post('/aadhaar-v2/submit-otp', { // external API call: POST kyc-api.surepass.io/api/v1/aadhaar-v2/submit-otp
         client_id: clientId,
         otp: String(otp),
       });

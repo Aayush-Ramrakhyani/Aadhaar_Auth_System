@@ -1,3 +1,10 @@
+/*
+ * components/OtpInput.jsx
+ * Six-box OTP entry component with per-digit focus management, keyboard
+ * navigation (arrow keys, backspace), and paste handling that auto-fills
+ * all six boxes and advances focus to the last filled position.
+ */
+
 import React, { useRef } from 'react';
 import './OtpInput.css';
 
@@ -30,9 +37,9 @@ export default function OtpInput({ value, onChange, disabled }) {
 
   const handlePaste = (e) => {
     e.preventDefault();
-    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6); // strip non-digits from pasted text so SMS OTPs auto-fill cleanly
     onChange(pasted);
-    const focusIdx = Math.min(pasted.length, 5);
+    const focusIdx = Math.min(pasted.length, 5); // move focus to the box after the last pasted digit
     refs.current[focusIdx]?.focus();
   };
 

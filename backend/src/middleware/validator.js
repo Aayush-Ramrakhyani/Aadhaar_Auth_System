@@ -1,10 +1,17 @@
+/*
+ * middleware/validator.js
+ * Express middleware functions that validate incoming request bodies for the
+ * Aadhaar OTP flow, including Verhoeff checksum validation for the Aadhaar
+ * number and format checks for OTP and transaction ID fields.
+ */
+
 const { verhoeffValidate } = require('../utils/verhoeff');
 
 function validateAadhaarFormat(aadhaar) {
   if (!aadhaar) return 'Aadhaar number is required';
   if (typeof aadhaar !== 'string') return 'Aadhaar must be a string';
   if (!/^\d{12}$/.test(aadhaar)) return 'Aadhaar must be exactly 12 digits';
-  if (!verhoeffValidate(aadhaar)) return 'Invalid Aadhaar number (checksum failed)';
+  if (!verhoeffValidate(aadhaar)) return 'Invalid Aadhaar number (checksum failed)'; // Verhoeff algorithm catches most digit-entry errors before any external call is made
   return null;
 }
 

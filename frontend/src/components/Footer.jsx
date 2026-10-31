@@ -1,3 +1,9 @@
+/*
+ * components/Footer.jsx
+ * Site-wide footer that displays a development disclaimer and copyright notice,
+ * reminding users the app is not affiliated with UIDAI.
+ */
+
 import React from 'react';
 import './Footer.css';
 

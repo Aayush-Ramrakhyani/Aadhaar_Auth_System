@@ -1,3 +1,10 @@
+/*
+ * aadhaarController.js
+ * Express route handlers for the full Aadhaar OTP authentication flow:
+ * validateAadhaar, requestOtp, verifyOtp, resendOtp, and getTransaction.
+ * Each handler delegates provider-specific API calls to the active AadhaarAuthProvider.
+ */
+
 const { getProvider } = require('../services/aadhaar');
 const captchaService = require('../services/captchaService');
 const transactionService = require('../services/transactionService');
@@ -43,7 +50,7 @@ async function requestOtp(req, res) {
 
     const provider = getProvider();
     const captchaResult = config.AADHAAR_PROVIDER.toLowerCase() === 'tathya'
-      ? { valid: true }
+      ? { valid: true } // Tathya passes captcha directly to its OTP endpoint; local validation is skipped
       : captchaService.validate(captchaId, captchaValue);
     if (!captchaResult.valid) {
       const messages = {
@@ -71,10 +78,10 @@ async function requestOtp(req, res) {
     }
 
     // Create transaction
-    const transaction = transactionService.create(aadhaar.slice(-4));
+    const transaction = transactionService.create(aadhaar.slice(-4)); // only the last 4 digits are stored for display
 
     // Request OTP from provider
-    const otpResult = await provider.requestOtp(String(aadhaar), transaction.transactionId, {
+    const otpResult = await provider.requestOtp(String(aadhaar), transaction.transactionId, { // external API call: triggers OTP SMS to registered mobile
       captchaId,
       captchaValue,
     });
@@ -152,7 +159,7 @@ async function verifyOtp(req, res) {
       });
     }
 
-    if (transaction.otpAttempts >= config.OTP.MAX_ATTEMPTS) {
+    if (transaction.otpAttempts >= config.OTP.MAX_ATTEMPTS) { // lock out after too many wrong guesses to prevent brute-force
       transactionService.update(transactionId, { status: transactionService.STATUS.OTP_FAILED });
       return res.status(429).json({
         success: false,
@@ -164,10 +171,10 @@ async function verifyOtp(req, res) {
     transactionService.update(transactionId, { otpAttempts: transaction.otpAttempts + 1 });
 
     const provider = getProvider();
-    const result = await provider.verifyOtp(String(otp), transactionId, transaction);
+    const result = await provider.verifyOtp(String(otp), transactionId, transaction); // external API call: submits OTP to provider for verification
 
     if (result.authenticated) {
-      transactionService.update(transactionId, { status: transactionService.STATUS.OTP_VERIFIED, aadhaar: null });
+      transactionService.update(transactionId, { status: transactionService.STATUS.OTP_VERIFIED, aadhaar: null }); // clear stored Aadhaar immediately after successful verification
       logger.info('Authentication successful', { transactionId });
       return res.json({
         success: true,
@@ -228,9 +235,9 @@ async function resendOtp(req, res) {
     }
 
     // Enforce resend cooldown
-    if (transaction.lastResendAt) {
+    if (transaction.lastResendAt) { // only check cooldown if a resend has been issued before
       const elapsed = (Date.now() - new Date(transaction.lastResendAt).getTime()) / 1000;
-      if (elapsed < config.OTP.RESEND_COOLDOWN_SECONDS) {
+      if (elapsed < config.OTP.RESEND_COOLDOWN_SECONDS) { // prevent SMS flooding within the cooldown window
         const remaining = Math.ceil(config.OTP.RESEND_COOLDOWN_SECONDS - elapsed);
         return res.status(429).json({
           success: false,

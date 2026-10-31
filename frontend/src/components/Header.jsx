@@ -1,3 +1,9 @@
+/*
+ * components/Header.jsx
+ * Site-wide header component displaying the Aadhaar Authentication branding,
+ * logo emblem, and a Development Mode badge for visual environment awareness.
+ */
+
 import React from 'react';
 import './Header.css';
 

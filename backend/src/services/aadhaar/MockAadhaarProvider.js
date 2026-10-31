@@ -1,3 +1,10 @@
+/*
+ * MockAadhaarProvider.js
+ * Development-only Aadhaar provider that simulates the OTP flow entirely
+ * in-memory without contacting any UIDAI service. Prints the generated OTP
+ * to the server console and refuses to run in production mode.
+ */
+
 const AadhaarAuthProvider = require('./AadhaarAuthProvider');
 const { verhoeffValidate } = require('../../utils/verhoeff');
 const { logger, maskAadhaar } = require('../../utils/logger');
@@ -15,7 +22,7 @@ class MockAadhaarProvider extends AadhaarAuthProvider {
   constructor() {
     super();
     this._assertNotProduction();
-    this._otpStore = new Map(); // transactionId -> otp (in-memory, never sent to client)
+    this._otpStore = new Map(); // transactionId → otp; held server-side only, never exposed in API responses
   }
 
   _assertNotProduction() {
@@ -28,7 +35,7 @@ class MockAadhaarProvider extends AadhaarAuthProvider {
   }
 
   _generateOtp() {
-    return String(Math.floor(100000 + Math.random() * 900000));
+    return String(Math.floor(100000 + Math.random() * 900000)); // produces a uniformly distributed 6-digit string
   }
 
   get name() {
@@ -39,7 +46,7 @@ class MockAadhaarProvider extends AadhaarAuthProvider {
     if (!/^\d{12}$/.test(aadhaar)) {
       return { valid: false, reason: 'Must be exactly 12 digits' };
     }
-    if (!verhoeffValidate(aadhaar)) {
+    if (!verhoeffValidate(aadhaar)) { // Verhoeff checksum is the only mock-level validation; no UIDAI lookup occurs
       return { valid: false, reason: 'Invalid Aadhaar checksum (Verhoeff)' };
     }
     return { valid: true };
@@ -49,7 +56,7 @@ class MockAadhaarProvider extends AadhaarAuthProvider {
     this._assertNotProduction();
     const otp = this._generateOtp();
     this._otpStore.set(transactionId, otp);
-    // OTP is printed only to server console — never sent to the browser
+    // OTP is printed only to server console — never sent to the browser or included in any API response
     process.stdout.write(`\n[MOCK] OTP for ${maskAadhaar(aadhaar)} → ${otp}\n\n`);
     logger.info('[MOCK] OTP requested', { aadhaar: maskAadhaar(aadhaar), transactionId });
     const maskedMobile = '*******' + String(Math.floor(1000 + Math.random() * 9000)).slice(-4);

@@ -1,3 +1,10 @@
+/*
+ * middleware/errorHandler.js
+ * Express error-handling and 404 middleware: logs unhandled errors server-side
+ * while returning generic messages to the client to avoid leaking stack traces
+ * or internal implementation details.
+ */
+
 const { logger } = require('../utils/logger');
 
 function errorHandler(err, req, res, next) {

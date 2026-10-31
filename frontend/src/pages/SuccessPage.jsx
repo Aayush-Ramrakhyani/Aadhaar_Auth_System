@@ -1,3 +1,9 @@
+/*
+ * pages/SuccessPage.jsx
+ * Terminal success page shown after a verified Aadhaar OTP authentication;
+ * displays a confirmation message and a button to return to the login page.
+ */
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';

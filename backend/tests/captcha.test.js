@@ -1,3 +1,9 @@
+/*
+ * tests/captcha.test.js
+ * Unit tests for captchaService: verifies creation, correct/incorrect answer
+ * validation, unknown-ID handling, and one-time-use enforcement.
+ */
+
 const captchaService = require('../src/services/captchaService');
 
 describe('CaptchaService', () => {
@@ -16,7 +22,7 @@ describe('CaptchaService', () => {
     const c = captchaService.create();
     // Retrieve stored answer via create then peek (white-box test)
     // We'll brute-force by extracting from SVG base64
-    const svgDecoded = Buffer.from(c.image.replace('data:image/svg+xml;base64,', ''), 'base64').toString();
+    const svgDecoded = Buffer.from(c.image.replace('data:image/svg+xml;base64,', ''), 'base64').toString(); // decode base64 SVG to extract rendered characters
     const match = [...svgDecoded.matchAll(/>([A-Z0-9])</g)].map(m => m[1]).join('');
     expect(match.length).toBe(5);
     const result = captchaService.validate(c.captchaId, match);

@@ -1,3 +1,10 @@
+/*
+ * pages/LoginPage.jsx
+ * First step of the auth flow: collects the 12-digit Aadhaar number and
+ * CAPTCHA answer, runs client-side Verhoeff validation, then calls the
+ * request-otp API and navigates to OtpPage with the returned transaction state.
+ */
+
 import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
@@ -43,7 +50,7 @@ export default function LoginPage() {
     e.preventDefault();
     if (loading) return;
 
-    // Client-side validation
+    // Client-side validation — Verhoeff checksum checked before any network call to give instant feedback
     const err = validateAadhaarClient(aadhaar);
     if (err) { setAadhaarError(err); return; }
 
@@ -57,7 +64,7 @@ export default function LoginPage() {
     setServerError(null);
 
     try {
-      const result = await aadhaarApi.requestOtp(aadhaar, captchaId, captchaValue);
+      const result = await aadhaarApi.requestOtp(aadhaar, captchaId, captchaValue); // API call: POST /api/aadhaar/request-otp
       navigate('/otp', {
         state: {
           transactionId: result.data.transactionId,

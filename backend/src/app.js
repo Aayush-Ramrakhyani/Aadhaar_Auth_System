@@ -1,3 +1,10 @@
+/*
+ * app.js
+ * Configures the Express application: security headers, CORS, body parsing,
+ * global rate limiting, API route mounting, and error handling. Exported for
+ * use by server.js (runtime) and tests (supertest).
+ */
+
 require('dotenv').config();
 const express = require('express');
 const helmet = require('helmet');
@@ -11,21 +18,21 @@ const config = require('./config');
 const app = express();
 
 // Security headers
-app.use(helmet());
+app.use(helmet()); // sets X-Frame-Options, CSP, HSTS, etc.
 
 // CORS
 app.use(cors({
-  origin: config.FRONTEND_URL,
+  origin: config.FRONTEND_URL, // only allow requests from the configured frontend origin
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 // Body parsing
-app.use(express.json({ limit: '10kb' }));
+app.use(express.json({ limit: '10kb' })); // cap payload to prevent large-body DoS
 app.use(express.urlencoded({ extended: false, limit: '10kb' }));
 
 // Global rate limiter
-app.use(globalLimiter);
+app.use(globalLimiter); // applied to every route before any handler runs
 
 // Health check
 app.get('/health', (req, res) => {

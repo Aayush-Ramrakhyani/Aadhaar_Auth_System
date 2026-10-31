@@ -1,3 +1,9 @@
+/*
+ * App.jsx
+ * Root routing component: declares the four application routes (login, OTP,
+ * success, failure) and redirects any unknown path back to the login page.
+ */
+
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';

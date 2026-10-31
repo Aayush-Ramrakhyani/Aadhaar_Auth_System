@@ -1,3 +1,10 @@
+/*
+ * UidaiAadhaarProvider.js
+ * Aadhaar provider targeting the official UIDAI Auth API v2.5 test sandbox.
+ * Sends OTP requests as signed XML; full OTP verification additionally requires
+ * the UIDAI public certificate and an AUA p12 keystore (requested from UIDAI).
+ */
+
 const axios = require('axios');
 const AadhaarAuthProvider = require('./AadhaarAuthProvider');
 const { logger, maskAadhaar } = require('../../utils/logger');
@@ -86,8 +93,8 @@ class UidaiAadhaarProvider extends AadhaarAuthProvider {
     //   err="200" → invalid AUA code
     //   err="800" → OTP rate-limited (try after 30 s)
     // ─────────────────────────────────────────────────────────────────────
-    const d1 = aadhaar[0];
-    const d2 = aadhaar[1];
+    const d1 = aadhaar[0]; // first digit used in URL path per UIDAI routing spec
+    const d2 = aadhaar[1]; // second digit used in URL path per UIDAI routing spec
     const url = `${this._baseUrl}/uidotp/2.5/${this._auaCode}/${this._subAuaCode}/${d1}/${d2}`;
     const xml = this._buildOtpXml(aadhaar, transactionId);
 
@@ -99,7 +106,7 @@ class UidaiAadhaarProvider extends AadhaarAuthProvider {
 
     let response;
     try {
-      response = await axios.post(url, xml, {
+      response = await axios.post(url, xml, { // external API call: POST developer.uidai.gov.in/uidotp/2.5/...
         headers: {
           'Content-Type': 'application/xml',
           'Accept': 'application/xml, */*',

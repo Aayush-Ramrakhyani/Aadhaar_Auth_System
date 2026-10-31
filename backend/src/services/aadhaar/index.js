@@ -1,3 +1,9 @@
+/*
+ * services/aadhaar/index.js
+ * Provider factory: reads AADHAAR_PROVIDER from config and lazily instantiates
+ * the matching AadhaarAuthProvider subclass, caching it for the process lifetime.
+ */
+
 const config = require('../../config');
 const { logger } = require('../../utils/logger');
 

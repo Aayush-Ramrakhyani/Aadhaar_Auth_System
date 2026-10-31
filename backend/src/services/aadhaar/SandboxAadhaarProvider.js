@@ -1,3 +1,10 @@
+/*
+ * SandboxAadhaarProvider.js
+ * Aadhaar provider using the Sandbox.co.in oKYC API. Authenticates with
+ * API key + secret to obtain a short-lived access token, then drives the
+ * OTP send and verify flow via Sandbox's /kyc/aadhaar/okyc endpoints.
+ */
+
 const axios = require('axios');
 const AadhaarAuthProvider = require('./AadhaarAuthProvider');
 const { verhoeffValidate } = require('../../utils/verhoeff');
@@ -42,7 +49,7 @@ class SandboxAadhaarProvider extends AadhaarAuthProvider {
       return this._accessToken;
     }
     try {
-      const res = await axios.post(
+      const res = await axios.post( // external API call: POST api.sandbox.co.in/authenticate — exchanges key+secret for a bearer token
         `${BASE_URL}/authenticate`,
         {},
         {
@@ -60,7 +67,7 @@ class SandboxAadhaarProvider extends AadhaarAuthProvider {
       if (!token) throw new Error('No access_token in Sandbox auth response');
 
       this._accessToken    = token;
-      this._tokenExpiresAt = Date.now() + 55 * 60 * 1000;
+      this._tokenExpiresAt = Date.now() + 55 * 60 * 1000; // cache for 55 min (token lifetime is 60 min; 5-min buffer for clock skew)
       logger.info('[SANDBOX] Access token obtained');
       return this._accessToken;
     } catch (err) {
@@ -98,7 +105,7 @@ class SandboxAadhaarProvider extends AadhaarAuthProvider {
         transactionId,
       });
 
-      const res = await axios.post(
+      const res = await axios.post( // external API call: POST api.sandbox.co.in/kyc/aadhaar/okyc/otp
         `${BASE_URL}/kyc/aadhaar/okyc/otp`,
         {
           '@entity':      'in.co.sandbox.kyc.aadhaar.okyc.otp.request',
@@ -114,7 +121,7 @@ class SandboxAadhaarProvider extends AadhaarAuthProvider {
       logger.info('[SANDBOX] OTP request full response', { body: JSON.stringify(body) });
 
       // Verify step needs reference_id (numeric, inside data), not transaction_id
-      const referenceId = body.data?.reference_id;
+      const referenceId = body.data?.reference_id; // Sandbox reference_id (numeric) is the session token required for the verify step
       if (!referenceId) {
         logger.error('[SANDBOX] Unexpected OTP response — no reference_id', { body });
         return { success: false, error: 'OTP request failed — no reference_id returned' };
@@ -147,7 +154,7 @@ class SandboxAadhaarProvider extends AadhaarAuthProvider {
       };
       logger.info('[SANDBOX] Verifying OTP — payload', { transactionId, referenceId: sandboxTxnId, payload: JSON.stringify(verifyPayload) });
 
-      const res = await axios.post(
+      const res = await axios.post( // external API call: POST api.sandbox.co.in/kyc/aadhaar/okyc/otp/verify
         `${BASE_URL}/kyc/aadhaar/okyc/otp/verify`,
         verifyPayload,
         { headers: this._headers(token), timeout: 30000 }

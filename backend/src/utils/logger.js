@@ -1,8 +1,15 @@
+/*
+ * utils/logger.js
+ * Lightweight structured logger (info/warn/error/debug) and maskAadhaar helper
+ * that redacts all but the last 4 digits of an Aadhaar number before logging.
+ * Output is suppressed in test mode to keep test output clean.
+ */
+
 const { NODE_ENV } = require('../config');
 
 function maskAadhaar(aadhaar) {
   if (!aadhaar || aadhaar.length < 4) return 'XXXX-XXXX-XXXX';
-  return `XXXX-XXXX-${aadhaar.slice(-4)}`;
+  return `XXXX-XXXX-${aadhaar.slice(-4)}`; // only the last 4 digits appear in logs; full number is never written
 }
 
 const logger = {

@@ -1,3 +1,9 @@
+/*
+ * tests/transaction.test.js
+ * Unit tests for transactionService: covers creation, retrieval, update,
+ * expiry detection, and removal of transaction records.
+ */
+
 const transactionService = require('../src/services/transactionService');
 
 describe('TransactionService', () => {

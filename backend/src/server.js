@@ -1,3 +1,9 @@
+/*
+ * server.js
+ * Entry point that starts the HTTP server, binding the Express app to the
+ * configured port and logging startup info including the active provider.
+ */
+
 const app = require('./app');
 const config = require('./config');
 const { logger } = require('./utils/logger');
@@ -9,6 +15,6 @@ app.listen(PORT, () => {
   logger.info(`Provider: ${config.AADHAAR_PROVIDER}`);
   logger.info(`Environment: ${config.NODE_ENV}`);
   if (config.AADHAAR_PROVIDER === 'mock') {
-    logger.warn('⚠  MOCK PROVIDER ACTIVE — for development only. Do not use in production.');
+    logger.warn('⚠  MOCK PROVIDER ACTIVE — for development only. Do not use in production.'); // safety reminder: mock must never reach production
   }
 });

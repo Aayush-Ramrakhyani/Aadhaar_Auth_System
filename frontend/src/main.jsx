@@ -1,3 +1,9 @@
+/*
+ * main.jsx
+ * React application entry point: mounts the root App component inside
+ * BrowserRouter to enable client-side routing, wrapped in StrictMode.
+ */
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';

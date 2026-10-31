@@ -1,3 +1,10 @@
+/*
+ * services/captchaService.js
+ * In-memory CAPTCHA service: generates SVG-based CAPTCHAs with randomised text
+ * and noise lines, stores them with expiry, and validates user responses with
+ * attempt tracking and one-time-use enforcement.
+ */
+
 const crypto = require('crypto');
 const { generateCaptchaId } = require('../utils/secureId');
 const { logger } = require('../utils/logger');
@@ -6,12 +13,12 @@ const config = require('../config');
 // In-memory captcha store { captchaId -> { answer, expiresAt, attempts } }
 const captchaStore = new Map();
 
-const CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // ambiguous characters (0, O, 1, I) intentionally excluded
 
 function generateText(length) {
   let text = '';
   for (let i = 0; i < length; i++) {
-    text += CHARS[crypto.randomInt(CHARS.length)];
+    text += CHARS[crypto.randomInt(CHARS.length)]; // crypto.randomInt used for cryptographically secure randomness
   }
   return text;
 }
@@ -48,7 +55,7 @@ function generateSvgCaptcha(text) {
   ${svgChars}
 </svg>`;
 
-  return Buffer.from(svg).toString('base64');
+  return Buffer.from(svg).toString('base64'); // base64-encode so SVG can be sent as a data URI
 }
 
 function create() {
@@ -92,7 +99,7 @@ function validate(captchaId, userValue) {
     return { valid: false, reason: 'CAPTCHA_INVALID' };
   }
 
-  // Delete after successful use — one-time
+  // Delete after successful use — one-time; prevents CAPTCHA replay attacks
   captchaStore.delete(captchaId);
   return { valid: true };
 }

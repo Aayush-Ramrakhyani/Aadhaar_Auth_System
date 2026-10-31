@@ -1,3 +1,10 @@
+/*
+ * components/CaptchaWidget.jsx
+ * Self-contained CAPTCHA component: fetches a CAPTCHA image from the backend
+ * on mount, renders it with a refresh button, and lifts the captchaId + user
+ * value to the parent via the onCaptchaReady callback.
+ */
+
 import React, { useEffect, useState, useCallback } from 'react';
 import { captchaApi } from '../services/api';
 import './CaptchaWidget.css';
@@ -14,7 +21,7 @@ export default function CaptchaWidget({ onCaptchaReady, disabled }) {
     setValue('');
     onCaptchaReady(null, '');
     try {
-      const data = await captchaApi.generate();
+      const data = await captchaApi.generate(); // API call: GET /api/captcha — returns captchaId + base64 SVG image
       setCaptcha(data);
     } catch (err) {
       setError('Failed to load CAPTCHA. Please try again.');
@@ -26,9 +33,9 @@ export default function CaptchaWidget({ onCaptchaReady, disabled }) {
   useEffect(() => { load(); }, [load]);
 
   const handleChange = (e) => {
-    const v = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5);
+    const v = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5); // normalise to uppercase alphanumeric matching the CAPTCHA character set
     setValue(v);
-    onCaptchaReady(captcha?.captchaId || null, v);
+    onCaptchaReady(captcha?.captchaId || null, v); // keep parent in sync so it can enable the submit button
   };
 
   return (

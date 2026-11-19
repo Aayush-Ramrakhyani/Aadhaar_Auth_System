@@ -162,7 +162,7 @@ Expired transactions are cleaned up automatically every 5 minutes.
 - **CAPTCHA** — expiry, one-time use, attempt limits
 - **OTP limits** — max attempts, max resends, cooldown
 - **Secure IDs** — cryptographically random transaction/captcha IDs
-- **Secrets in source** — all credentials via `.env`
+- **No secrets in source** — all credentials via `.env`
 - **No stack traces** exposed to clients
 - **Aadhaar masked in logs**: `XXXX-XXXX-1234`
 
